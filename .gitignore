@@ -1,0 +1,6 @@
+node_modules/
+*.db
+base-net/artifacts/fabric-ca-server/org*/msp/
+~*
+*~
+~$*

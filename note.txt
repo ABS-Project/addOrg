@@ -1,0 +1,4 @@
+1.先执行bash.sh脚本下载镜像文件
+2.如果想重新生成证书，进入balance-transfer/artifacts/文件夹，执行generateArtifacts脚本。现在无需重启即可使用新生成的证书。
+3.执行runApp.sh启动服务
+4.打开新终端，执行testAPIs测试
