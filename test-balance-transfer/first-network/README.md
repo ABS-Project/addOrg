@@ -1,17 +1,14 @@
 ## Build Your First Network (BYFN)
+这里因为涉及到org3,所有启动CA的配置文件fabric-ca-server-config.yaml必须修改，
+为了方便，我们采用的方法是将本地的fabric-ca-server-config.yaml修改后复制到hyperledger/fabric-ca的相应目录下：
+###### bash
+sudo docker run -t -i hyperledger/fabric-ca:latest /bin/bash  #启动ca镜像，得到容器id，然后退出容器
+docker cp fabric-ca-server-config.yaml c49b088cb3b6:/etc/hyperledger/fabric-ca-server/  #将本地文件复制到容器相应位置，注意容器id要与上面一致
+sudo docker commit -m "add fabric-ca-server-config.yaml" -a "Docker Newbee" c49b088cb3b6 hyperledger/fabric-ca:v1  #其中，-m 来指定提交的说明信息，跟我们使用的版本控制工具一样；-a 可以指定更新的用户信息；之后是用来创建镜像的容器的 ID；最后指定目标镜像的仓库名和 tag 信息。创建成功后会返回这个镜像的 ID 信息
+######
 
-The directions for using this are documented in the Hyperledger Fabric
-["Build Your First Network"](http://hyperledger-fabric.readthedocs.io/en/latest/build_network.html) tutorial.
-
-
-
-CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/users/Admin@example.com/msp/
-CORE_PEER_LOCALMSPID="OrdererMSP"
-peer channel fetch config -o orderer.example.com:7050 -c "mychannel" --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
-
-
-
-ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
-peer channel fetch config -o orderer.example.com:7050 -c mychannel --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA|xargs mv true config_block.pb
-curl -X POST --data-binary @config_block.pb http://127.0.0.1:7059/protolator/decode/common.Block > config_block.json
-jq .data.data[0].payload.data.config config_block.json > config.json
+这里我的tag为v1，和我的docker-compose中的文件一致。
+启动ca时注意指定文件
+#####
+command: sh -c 'fabric-ca-server start --config /etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org3.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA3_PRIVATE_KEY -b admin:adminpw -d'
+#####

@@ -1,0 +1,68 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+networks:
+  byfn:
+services:
+  ca3:
+    image: hyperledger/fabric-ca:v1
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org3
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org3.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA3_PRIVATE_KEY
+    ports:
+      - "9054:7054"
+    command: sh -c 'fabric-ca-server start --config /etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org3.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA3_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org3.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg3
+    networks:
+      - byfn
+
+  peer0.org3.example.com:
+    container_name: peer0.org3.example.com
+    extends:
+      file: ./base/peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org3.example.com
+      - CORE_PEER_ADDRESS=peer0.org3.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org3.example.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org3.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org3MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/msp:/etc/hyperledger/fabric/msp
+        - ./crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls:/etc/hyperledger/fabric/tls
+    ports:
+      - 9051:7051
+      - 9053:7053
+    networks:
+      - byfn
+
+  peer1.org3.example.com:
+    container_name: peer1.org3.example.com
+    extends:
+      file: ./base/peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.org3.example.com
+      - CORE_PEER_ADDRESS=peer1.org3.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org3.example.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org3.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org3MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/msp:/etc/hyperledger/fabric/msp
+        - ./crypto-config/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/tls:/etc/hyperledger/fabric/tls
+    ports:
+      - 9056:7051
+      - 9058:7053
+    networks:
+      - byfn

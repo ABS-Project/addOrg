@@ -44,7 +44,7 @@ curl -s -X POST \
   -H "content-type: application/json" \
   -d '{
 	"channelName":"mychannel",
-	"channelConfigPath":"../artifacts/channel/mychannel.tx"
+	"channelConfigPath":"../first-network/channel-artifacts/channel.tx"
 }'
 echo
 echo
