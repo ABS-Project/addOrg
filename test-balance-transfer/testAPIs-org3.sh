@@ -25,7 +25,18 @@ echo
 echo "ORG3 token is $ORG3_TOKEN"
 echo
 
-# echo
+echo "POST request Enroll on Org1  ..."
+echo
+ORG1_TOKEN=$(curl -s -X POST \
+  http://localhost:4000/users \
+  -H "content-type: application/x-www-form-urlencoded" \
+  -d 'username=Jim&orgName=org1')
+echo $ORG1_TOKEN
+ORG1_TOKEN=$(echo $ORG1_TOKEN | jq ".token" | sed "s/\"//g")
+echo
+echo "ORG1 token is $ORG1_TOKEN"
+
+echo
 # echo "POST request Create channel  ..."
 # echo
 # curl -s -X POST \
@@ -33,22 +44,47 @@ echo
 #   -H "authorization: Bearer $ORG3_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d '{
-# 	"channelName":"org3-channel",
-# 	"channelConfigPath":"../first-network/org3-artifacts/channel-org3.tx"
+# 	"channelName":"newchannel",
+# 	"channelConfigPath":"../first-network/org3-artifacts/newchannel.tx"
 # }'
 # echo
 # echo
 # sleep 5
-# echo "POST request Join channel on Org3"
+# echo "POST request add Org3 channel "
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/channels/mychannel/peers \
+#   http://localhost:4000/addOrg \
 #   -H "authorization: Bearer $ORG3_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d '{
+# 	"channelName": "mychannel",
+# 	"orgName":"org3"
+# }'
+# echo
+# echo
+# echo
+# sleep 5
+# echo "POST request Join channel on Org1"
+# echo
+# curl -s -X POST \
+#   http://localhost:4000/channels/newchannel/peers \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d '{
 # 	"peers": ["peer1","peer2"]
 # }'
 # echo
+
+echo "POST request Join channel on Org3"
+echo
+curl -s -X POST \
+  http://localhost:4000/channels/mychannel/peers \
+  -H "authorization: Bearer $ORG3_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"peers": ["peer1","peer2"]
+}'
+echo
 # echo
 #
 # echo "POST Install chaincode on Org1"

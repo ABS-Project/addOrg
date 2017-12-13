@@ -53,6 +53,12 @@ for (let key in ORGS) {
 		let caUrl = ORGS[key].ca;
 		caClients[key] = new copService(caUrl, null /*defautl TLS opts*/, '' /* default CA */, cryptoSuite);
 	}
+	else{
+		let client = new hfc();
+		let cryptoSuite = hfc.newCryptoSuite();
+		cryptoSuite.setCryptoKeyStore(hfc.newCryptoKeyStore({path: getKeyStoreForOrg(ORGS[key].name)}));
+		clients[key] = client;
+	}
 }
 
 function setupPeers(channel, org, client) {
@@ -142,7 +148,9 @@ var getChannelForOrg = function(org) {
 var getClientForOrg = function(org) {
 	return clients[org];
 };
-
+var getClientForOrderer = function(orderer){
+	return clients[orderer];
+}
 var newPeers = function(names, org) {
 	return newRemotes(names, true, org);
 };
@@ -267,6 +275,35 @@ var getRegisteredUsers = function(username, userOrg, isJson) {
 	});
 };
 
+var getOrdererAdmin = function(orderer){
+	var admin = ORGS["orderer"].admin;
+	var keyPath = path.join(__dirname, admin.key);
+	var keyPEM = Buffer.from(readAllFiles(keyPath)[0]).toString();
+	var certPath = path.join(__dirname, admin.cert);
+	var certPEM = readAllFiles(certPath)[0].toString();
+
+	var client = getClientForOrderer(orderer);
+	var cryptoSuite = hfc.newCryptoSuite();
+	if (orderer) {
+		cryptoSuite.setCryptoKeyStore(hfc.newCryptoKeyStore({path: getKeyStoreForOrg(getOrgName(orderer))}));
+		client.setCryptoSuite(cryptoSuite);
+	}
+	return hfc.newDefaultKeyValueStore({
+		path: getKeyStoreForOrg(getOrgName(orderer))
+	}).then((store) => {
+		client.setStateStore(store);
+		return client.createUser({
+			username: 'peer'+orderer+'Admin',
+			mspid: getMspID(orderer),
+			cryptoContent: {
+				privateKeyPEM: keyPEM,
+				signedCertPEM: certPEM
+			}
+		});
+	});
+}
+
+
 var getOrgAdmin = function(userOrg) {
 	var admin = ORGS[userOrg].admin;
 	var keyPath = path.join(__dirname, admin.key);
@@ -307,6 +344,75 @@ var getLogger = function(moduleName) {
 	return logger;
 };
 
+var addNewOrg = function(newOrg,channelName){
+	var client = getClientForOrg(newOrg);
+	var signatures = [];
+	var config_envelope = fs.readFileSync(path.join(__dirname, 'mychannel_config_update_in_envelope.pb'));
+	var config_proto = client.extractChannelConfig(config_envelope);
+	return hfc.newDefaultKeyValueStore({
+		path: getKeyStoreForOrg(getOrgName(newOrg))
+	}).then((store) => {
+		client.setStateStore(store);
+		client._userContext = null;
+		return getOrgAdmin('org1');
+	}).then((adminUserObj)=>{
+		logger.info('Successfully enrolled user \'admin\' for org1');
+		// var client = getClientForOrg("org1");
+		client._userContext = adminUserObj
+		//org1对config_proto进行签名
+		var signature = client.signChannelConfig(config_proto);
+		logger.info('Successfully signed config update by org1');
+		signatures.push(signature);
+		client._userContext = null;
+		return getOrgAdmin('org2');
+	}).then((adminUserObj) => {
+		logger.info('Successfully enrolled user \'admin\' for org2');
+		// var client = getClientForOrg("org2");
+		//org2对config_proto进行签名
+		client._userContext = adminUserObj
+    var signature = client.signChannelConfig(config_proto);
+		logger.info('Successfully signed config update by org2');
+		signatures.push(signature);
+		client._userContext = null;
+		return getOrdererAdmin('orderer');
+		// return getOrgAdmin('org2');
+	}).then((adminUserObj) =>{
+		// the_user = adminUserObj;
+		//orderer对config_proto进行签名
+		// var client = getClientForOrderer('orderer');
+		client._userContext = adminUserObj
+	  var signature = client.signChannelConfig(config_proto);
+		logger.info('Successfully signed config update by orderer');
+		signatures.push(signature);
+		let tx_id = client.newTransactionID();
+		var channel = getChannelForOrg("org2");
+		let request = {
+		config: config_proto,
+		signatures : signatures,
+		name : channelName,
+		orderer : channel.getOrderers()[0],
+		txId  : tx_id
+		};
+		logger.info(tx_id);
+		return client.updateChannel(request);
+	}).then((result) => {
+		if(result.status && result.status === 'SUCCESS') {
+            logger.info('Successfully updated the channel.');
+            // return sleep(5000);
+						let response = {
+							success: true,
+							message: 'Channel \'' + channelName + '\' updated Successfully'
+						};
+						return response;
+        } else {
+            logger.error('Failed to update the channel. ');
+            Promise.reject('Failed to update the channel');
+        }
+	})
+};
+
+
+
 exports.getChannelForOrg = getChannelForOrg;
 exports.getClientForOrg = getClientForOrg;
 exports.getLogger = getLogger;
@@ -317,3 +423,4 @@ exports.newPeers = newPeers;
 exports.newEventHubs = newEventHubs;
 exports.getRegisteredUsers = getRegisteredUsers;
 exports.getOrgAdmin = getOrgAdmin;
+exports.addNewOrg = addNewOrg;

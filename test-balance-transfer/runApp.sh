@@ -32,8 +32,8 @@ function restartNetwork() {
 
         #teardown the network and clean the containers and intermediate images
 	cd first-network
-	docker-compose -f docker-compose-e2e.yaml down
-  docker-compose -f docker-compose-org3.yaml down
+	docker-compose -f docker-compose-e2e.yaml -f docker-compose-org3.yaml down
+  docker-compose -f docker-compose-e2e.yaml -f down
 	dkcl
 	dkrm
 	#Cleanup the material
@@ -41,7 +41,6 @@ function restartNetwork() {
 
 	#Start the network
 	docker-compose -f docker-compose-e2e.yaml up -d
-  docker-compose -f docker-compose-org3.yaml up -d
 	echo
 }
 

@@ -418,3 +418,12 @@ app.get('/channels', function(req, res) {
 		res.send(message);
 	});
 });
+
+app.post('/addOrg',function(req,res) {
+	logger.debug('================ addOrg ======================')
+	var channelName = req.body.channelName;
+	var newOrg = req.body.orgName;
+	helper.addNewOrg(newOrg, channelName).then(function(response) {
+		res.send(response);
+	});
+});

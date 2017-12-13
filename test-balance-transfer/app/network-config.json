@@ -1,9 +1,15 @@
 {
 	"network-config": {
 		"orderer": {
+			"name":"orderer",
+			"mspid":"OrdererMSP",
 			"url": "grpcs://localhost:7050",
 			"server-hostname": "orderer.example.com",
-			"tls_cacerts": "../first-network/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt"
+			"tls_cacerts": "../first-network/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt",
+			"admin":{
+				"key":"../first-network/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore",
+				"cert":"../first-network/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/signcerts"
+			}
 		},
 		"org1": {
 			"name": "peerOrg1",
@@ -63,8 +69,8 @@
 					"tls_cacerts": "../first-network/crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt"
 				},
 				"peer2": {
-					"requests": "grpcs://localhost:8056",
-					"events": "grpcs://localhost:8058",
+					"requests": "grpcs://localhost:9056",
+					"events": "grpcs://localhost:9058",
 					"server-hostname": "peer1.org3.example.com",
 					"tls_cacerts": "../first-network/crypto-config/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/tls/ca.crt"
 				}

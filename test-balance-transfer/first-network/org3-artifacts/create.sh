@@ -1,6 +1,6 @@
 export PATH=${PWD}/../../../bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}
-CHANNEL_NAME="mychannel"
+CHANNEL_NAME="newchannel"
 
 
 function generateCerts (){
@@ -17,7 +17,7 @@ function generateCerts (){
     rm -Rf crypto-config
   fi
   if [ -d "../crypto-config/peerOrganizations/org3.example.com" ]; then
-    rm -Rf ../crypto-config/peerOrganizations/org3.example.com
+    sudo rm -Rf ../crypto-config/peerOrganizations/org3.example.com
   fi
   cryptogen generate --config=./crypto-config.yaml
   mv ./crypto-config/peerOrganizations/* ../crypto-config/peerOrganizations/
@@ -73,7 +73,7 @@ function generateChannelArtifacts() {
   echo "#################################################################"
   echo "### Generating channel configuration transaction 'channel.tx' ###"
   echo "#################################################################"
-  configtxgen -profile TwoOrgsChannel -outputCreateChannelTx channel-org3.tx -channelID $CHANNEL_NAME
+  configtxgen -profile TwoOrgsChannel -outputCreateChannelTx newchannel.tx -channelID $CHANNEL_NAME
   if [ "$?" -ne 0 ]; then
     echo "Failed to generate channel configuration transaction..."
     exit 1
@@ -81,7 +81,8 @@ function generateChannelArtifacts() {
   echo "#################################################################"
   echo "#######    Generating anchor peer update for Org3MSP   ##########"
   echo "#################################################################"
-  configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ../channel-artifacts/Org3MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org3MSP
+  configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./Org3MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org3MSP
+  configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ../channel-artifacts/Org3MSPanchors.tx -channelID "mychannel" -asOrg Org3MSP
   if [ "$?" -ne 0 ]; then
     echo "Failed to generate anchor peer update for Org3MSP..."
     exit 1
@@ -89,8 +90,8 @@ function generateChannelArtifacts() {
   echo
 
 }
-generateCerts
+# generateCerts
 replacePrivateKey
-generateChannelArtifacts
-curl -X POST --data-binary @genesis_org3.block http://127.0.0.1:7059/protolator/decode/common.Block > genesis_org3.json
-jq .data.data[0].payload.data.config genesis_org3.json >genesis_new.json
+# generateChannelArtifacts
+# curl -X POST --data-binary @genesis_org3.block http://127.0.0.1:7059/protolator/decode/common.Block > genesis_org3.json
+# jq .data.data[0].payload.data.config genesis_org3.json >genesis_new.json
