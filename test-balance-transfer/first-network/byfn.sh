@@ -167,10 +167,6 @@ function replacePrivateKey () {
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
   sed $OPTS "s/CA2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-  cd crypto-config/peerOrganizations/org3.example.com/ca/
-  PRIV_KEY=$(ls *_sk)
-  cd "$CURRENT_DIR"
-  sed $OPTS "s/CA3_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
   # If MacOSX, remove the temporary backup of the docker-compose file
   if [ "$ARCH" == "Darwin" ]; then
     rm docker-compose-e2e.yamlt

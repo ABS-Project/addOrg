@@ -102,6 +102,18 @@ curl -s -X POST \
 }'
 echo
 echo
+echo "POST invoke chaincode on peers of Org1 and Org2"
+echo
+TRX_ID=$(curl -s -X POST \
+  http://localhost:4000/channels/mychannel/chaincodes/mycc \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"fcn":"move",
+	"args":["a","b","10"]
+}')
+echo "Transacton ID is $TRX_ID"
+echo
 echo "POST request Join channel on Org2"
 echo
 curl -s -X POST \
@@ -126,20 +138,9 @@ curl -s -X POST \
 	"chaincodeVersion":"v0"
 }'
 echo
-echo
-echo "POST invoke chaincode on peers of Org1 and Org2"
-echo
-TRX_ID=$(curl -s -X POST \
-  http://localhost:4000/channels/mychannel/chaincodes/mycc \
-  -H "authorization: Bearer $ORG1_TOKEN" \
-  -H "content-type: application/json" \
-  -d '{
-	"fcn":"move",
-	"args":["a","b","10"]
-}')
-echo "Transacton ID is $TRX_ID"
 
-echo "POST instantiate chaincode on peer1 of Org1"
+
+echo "POST instantiate chaincode on peer1 of Org2"
 echo
 curl -s -X POST \
   http://localhost:4000/channels/mychannel/chaincodes \
@@ -153,7 +154,17 @@ curl -s -X POST \
 
 echo
 echo
-
+echo "POST invoke chaincode on peers of Org1 and Org2"
+echo
+TRX_ID=$(curl -s -X POST \
+  http://localhost:4000/channels/mychannel/chaincodes/mycc \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"fcn":"move",
+	"args":["a","b","20"]
+}')
+echo "Transacton ID is $TRX_ID"
 echo "GET query chaincode on peer1 of Org2"
 echo
 curl -s -X GET \

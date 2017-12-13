@@ -90,8 +90,8 @@ function generateChannelArtifacts() {
   echo
 
 }
-# generateCerts
+generateCerts
 replacePrivateKey
-# generateChannelArtifacts
-# curl -X POST --data-binary @genesis_org3.block http://127.0.0.1:7059/protolator/decode/common.Block > genesis_org3.json
-# jq .data.data[0].payload.data.config genesis_org3.json >genesis_new.json
+generateChannelArtifacts
+curl -X POST --data-binary @genesis_org3.block http://127.0.0.1:7059/protolator/decode/common.Block > genesis_org3.json
+jq .data.data[0].payload.data.config genesis_org3.json >genesis_new.json

@@ -103,16 +103,16 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 						eh.unregisterTxEvent(transactionID);
 						eh.disconnect();
 
-						if (code !== 'VALID') {
-							logger.error(
-								'The balance transfer transaction was invalid, code = ' + code);
-							reject();
-						} else {
+						// if (code !== 'VALID') {
+						// 	logger.error(
+						// 		'The balance transfer transaction was invalid, code = ' + code);
+						// 	reject();
+						// } else {
 							logger.info(
 								'The balance transfer transaction has been committed on peer ' +
 								eh._ep._endpoint.addr);
 							resolve();
-						}
+						// }
 					});
 				});
 				eventPromises.push(txPromise);

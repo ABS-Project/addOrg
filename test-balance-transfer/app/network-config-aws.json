@@ -1,0 +1,78 @@
+{
+	"network-config": {
+		"orderer": {
+			"url": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:7050",
+			"server-hostname": "orderer.example.com",
+			"tls_cacerts": "../first-network/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt"
+		},
+		"org1": {
+			"name": "peerOrg1",
+			"mspid": "Org1MSP",
+			"ca": "https://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:7054",
+			"peers": {
+				"peer1": {
+					"requests": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:7051",
+					"events": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:7053",
+					"server-hostname": "peer0.org1.example.com",
+					"tls_cacerts": "../first-network/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
+				},
+				"peer2": {
+					"requests": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:7056",
+					"events": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:7058",
+					"server-hostname": "peer1.org1.example.com",
+					"tls_cacerts": "../first-network/crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/ca.crt"
+				}
+			},
+			"admin": {
+				"key": "../first-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore",
+				"cert": "../first-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
+			}
+		},
+		"org2": {
+			"name": "peerOrg2",
+			"mspid": "Org2MSP",
+			"ca": "https://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:8054",
+			"peers": {
+				"peer1": {
+					"requests": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:8051",
+					"events": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:8053",
+					"server-hostname": "peer0.org2.example.com",
+					"tls_cacerts": "../first-network/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt"
+				},
+				"peer2": {
+					"requests": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:8056",
+					"events": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:8058",
+					"server-hostname": "peer1.org2.example.com",
+					"tls_cacerts": "../first-network/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls/ca.crt"
+				}
+			},
+			"admin": {
+				"key": "../first-network/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore",
+				"cert": "../first-network/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts"
+			}
+		},
+		"org3": {
+			"name": "peerOrg3",
+			"mspid": "Org3MSP",
+			"ca": "https://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:9054",
+			"peers": {
+				"peer1": {
+					"requests": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:9051",
+					"events": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:9053",
+					"server-hostname": "peer0.org3.example.com",
+					"tls_cacerts": "../first-network/crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt"
+				},
+				"peer2": {
+					"requests": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:9056",
+					"events": "grpc://ec2-13-59-99-140.us-east-2.compute.amazonaws.com:9058",
+					"server-hostname": "peer1.org3.example.com",
+					"tls_cacerts": "../first-network/crypto-config/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/tls/ca.crt"
+				}
+			},
+			"admin": {
+				"key": "../first-network/crypto-config/peerOrganizations/org3.example.com/users/Admin@org3.example.com/msp/keystore",
+				"cert": "../first-network/crypto-config/peerOrganizations/org3.example.com/users/Admin@org3.example.com/msp/signcerts"
+			}
+		}
+	}
+}

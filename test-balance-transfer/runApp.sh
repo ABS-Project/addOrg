@@ -33,14 +33,13 @@ function restartNetwork() {
         #teardown the network and clean the containers and intermediate images
 	cd first-network
 	docker-compose -f docker-compose-e2e.yaml -f docker-compose-org3.yaml down
-  docker-compose -f docker-compose-e2e.yaml -f down
 	dkcl
 	dkrm
 	#Cleanup the material
 	rm -rf /tmp/hfc-test-kvs_peerOrg* $HOME/.hfc-key-store/ /tmp/fabric-client-kvs_peerOrg*
 
 	#Start the network
-	docker-compose -f docker-compose-e2e.yaml up -d
+	docker-compose -f docker-compose-e2e.yaml -f docker-compose-org3.yaml up -d
 	echo
 }
 
