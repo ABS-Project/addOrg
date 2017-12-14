@@ -5,3 +5,4 @@ base-net/artifacts/fabric-ca-server/org*/msp/
 *~
 ~$*
 crypto-config/
+channel-artifacts/
