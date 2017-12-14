@@ -34,35 +34,6 @@ type SimpleChaincode struct {
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response  {
 	logger.Info("########### example_cc0 Init ###########")
 
-	_, args := stub.GetFunctionAndParameters()
-	var A, B string    // Entities
-	var Aval, Bval int // Asset holdings
-	var err error
-
-	// Initialize the chaincode
-	A = args[0]
-	Aval, err = strconv.Atoi(args[1])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding")
-	}
-	B = args[2]
-	Bval, err = strconv.Atoi(args[3])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding")
-	}
-	logger.Info("Aval = %d, Bval = %d\n", Aval, Bval)
-
-	// Write the state to the ledger
-	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-
-	err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-
 	return shim.Success(nil)
 
 
@@ -73,7 +44,9 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	logger.Info("########### example_cc0 Invoke ###########")
 
 	function, args := stub.GetFunctionAndParameters()
-	
+	if function == "init" {
+		return t.init(stub, args)
+	}
 	if function == "delete" {
 		// Deletes an entity from its state
 		return t.delete(stub, args)
@@ -91,6 +64,64 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	logger.Errorf("Unknown action, check the first argument, must be one of 'delete', 'query', or 'move'. But got: %v", args[0])
 	return shim.Error(fmt.Sprintf("Unknown action, check the first argument, must be one of 'delete', 'query', or 'move'. But got: %v", args[0]))
 }
+
+func (t *SimpleChaincode) init(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	// must be an invoke
+	var A, B string    // Entities
+	var Aval, Bval int // Asset holdings
+	var err error
+
+	if len(args) != 4 {
+		return shim.Error("Incorrect number of arguments. Expecting 4, function followed by 2 names and 2 value")
+	}
+
+	A = args[0]
+	B = args[2]
+
+	// Get the state from the ledger
+	// TODO: will be nice to have a GetAllState call to ledger
+	Avalbytes, err := stub.GetState(A)
+	// if err == nil {
+	// 	return shim.Error("already e")
+	// }
+	if Avalbytes != nil {
+		return shim.Error("Entity already exists")
+	}
+
+	Bvalbytes, err := stub.GetState(B)
+	// if err != nil {
+	// 	return shim.Error("Failed to get state")
+	// }
+	if Bvalbytes != nil {
+		return shim.Error("Entity Entity already exists")
+	}
+
+	// Perform the execution
+	Aval, err = strconv.Atoi(args[1])
+	if err != nil {
+		return shim.Error("Invalid transaction amount, expecting a integer value")
+	}
+	Bval, err = strconv.Atoi(args[3])
+	if err != nil {
+		return shim.Error("Invalid transaction amount, expecting a integer value")
+	}
+
+	logger.Infof("Aval = %d, Bval = %d\n", Aval, Bval)
+
+	// Write the state back to the ledger
+	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+        return shim.Success(nil);
+}
+
 
 func (t *SimpleChaincode) move(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// must be an invoke
