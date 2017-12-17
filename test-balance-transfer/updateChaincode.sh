@@ -48,46 +48,6 @@ echo "ORG3 token is $ORG3_TOKEN"
 echo
 echo
 
-
-# echo "POST Install chaincode on Org1"
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/chaincodes \
-#   -H "authorization: Bearer $ORG1_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d '{
-# 	"peers": ["peer1", "peer2"],
-# 	"chaincodeName":"mycc",
-# 	"chaincodePath":"github.com/example_cc",
-# 	"chaincodeVersion":"v1"
-# }'
-# echo
-#
-# echo "POST Install chaincode on Org2"
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/chaincodes \
-#   -H "authorization: Bearer $ORG2_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d '{
-# 	"peers": ["peer1","peer2"],
-# 	"chaincodeName":"mycc",
-# 	"chaincodePath":"github.com/example_cc",
-# 	"chaincodeVersion":"v1"
-# }'
-# echo
-# echo "POST Install chaincode on Org3"
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/chaincodes \
-#   -H "authorization: Bearer $ORG3_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d '{
-# 	"peers": ["peer1","peer2"],
-# 	"chaincodeName":"mycc",
-# 	"chaincodePath":"github.com/example_cc",
-# 	"chaincodeVersion":"v1"
-# }'
 # echo
 echo "POST instantiate chaincode"
 echo

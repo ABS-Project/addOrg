@@ -74,6 +74,19 @@ curl -s -X POST \
 	"chaincodeVersion":"v0"
 }'
 echo
+echo "POST Install chaincode on Org2"
+echo
+curl -s -X POST \
+  http://localhost:4000/chaincodes \
+  -H "authorization: Bearer $ORG2_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"peers": ["peer1","peer2"],
+	"chaincodeName":"mycc",
+	"chaincodePath":"github.com/example_cc",
+	"chaincodeVersion":"v0"
+}'
+echo
 echo
 echo
 
@@ -112,31 +125,6 @@ curl -s -X POST \
 	"peers": ["peer1","peer2"]
 }'
 echo
-echo
-echo "POST Install chaincode on Org2"
-echo
-curl -s -X POST \
-  http://localhost:4000/chaincodes \
-  -H "authorization: Bearer $ORG2_TOKEN" \
-  -H "content-type: application/json" \
-  -d '{
-	"peers": ["peer1","peer2"],
-	"chaincodeName":"mycc",
-	"chaincodePath":"github.com/example_cc",
-	"chaincodeVersion":"v0"
-}'
-echo
-echo "POST instantiate chaincode on peer1 of Org2"
-echo
-curl -s -X POST \
-  http://localhost:4000/channels/mychannel/chaincodes \
-  -H "authorization: Bearer $ORG2_TOKEN" \
-  -H "content-type: application/json" \
-  -d '{
-	"chaincodeName":"mycc",
-	"chaincodeVersion":"v0",
-	"args":[]
-}'
 echo
 
 echo
